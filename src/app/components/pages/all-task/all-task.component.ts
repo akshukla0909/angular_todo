@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { PageTitleComponent } from '../../page-title/page-title.component';
 import { TaskListComponent } from '../../task-list/task-list.component';
+import { state } from '@angular/animations';
+import { StateService } from '../../../services/state.service';
 
 @Component({
   selector: 'app-all-task',
@@ -12,13 +14,23 @@ import { TaskListComponent } from '../../task-list/task-list.component';
 })
 export class AllTaskComponent {
    newTask = ""
+   initialTaskList : any[] = []
    taskList : any[] = []
    httpService = inject(HttpService)
+   stateService = inject(StateService)
    ngOnInit(){
+    this.stateService.searchSubject.subscribe((value)=>{
+      if(value){
+        this.taskList = this.initialTaskList.filter(x => x.title.toLowerCase().includes(value.toLowerCase()))
+      }
+      else{
+        this.taskList = this.initialTaskList
+      }
+    })
     this.getAllTasks()
+
    }
    addTask(){
-    // console.log("hello", this.newTask);
       this.httpService.addTask(this.newTask).subscribe(()=>{
         // console.log("added");
         this.newTask = ""
@@ -29,14 +41,13 @@ export class AllTaskComponent {
    getAllTasks(){
         this.httpService.getAllTasks().subscribe((result: any)=>{
           console.log(result);
-          this.taskList = result
+          this.initialTaskList = this.taskList = result
           
         })
    }
 
    onComplete(task:any){
         task.completed = true
-        console.log("comp");
         this.httpService.updateTask(task).subscribe(()=>{
           
         })
@@ -44,7 +55,11 @@ export class AllTaskComponent {
    }
    onImportant(task:any){
        task.important = true
-       console.log("imp");
-       
+      //  console.log("imp");
+       this.httpService.updateTask(task).subscribe(()=>{
+       })
+   }
+   search(searchTerm : String){
+        
    }
 }

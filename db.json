@@ -26,7 +26,15 @@
     },
     {
       "id": "2165",
-      "title": "now sleep"
+      "title": "now sleep",
+      "completed": true,
+      "important": true
+    },
+    {
+      "id": "f52e",
+      "title": "again get up",
+      "important": true,
+      "completed": true
     }
   ]
 }
